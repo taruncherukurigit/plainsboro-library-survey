@@ -1,0 +1,15 @@
+band,channel,bssids_ge_minus80,library_bssids
+2.4GHz,1,16,2
+2.4GHz,2,1,0
+2.4GHz,3,1,0
+2.4GHz,6,24,12
+2.4GHz,8,1,0
+2.4GHz,11,7,4
+5GHz,36,2,2
+5GHz,44,2,0
+5GHz,48,2,2
+5GHz,100,2,0
+5GHz,108,4,2
+5GHz,149,4,4
+5GHz,153,4,4
+5GHz,157,2,2

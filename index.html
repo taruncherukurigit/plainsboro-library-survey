@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Packetgeist — Plainsboro Public Library WiFi Site Survey</title>
+<meta name="description" content="A passive 802.11 site survey of a three-storey public library. 67 measurement points, 1,523 observations, 8 access points. Coverage was never the problem.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1214;        /* unlit room */
+  --ink-2:#121C1F;
+  --line:#233034;
+  --paper:#E6E9E7;
+  --paper-dim:#93A3A5;
+  --signal:#E8A33D;     /* sodium lamp / heatmap warm */
+  --measured:#5FD3D6;   /* cold cyan, measured values */
+  --alert:#E4674B;
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+a{color:var(--measured)}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0}
+
+/* ---------- signal rail: the signature element ---------- */
+.rail{position:fixed;left:0;top:0;bottom:0;width:34px;z-index:50;
+  border-right:1px solid var(--line);background:var(--ink);
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:16px 0;pointer-events:none}
+.rail span{font-family:var(--mono);font-size:9px;color:var(--paper-dim);
+  writing-mode:vertical-rl;text-align:center;letter-spacing:.08em}
+.rail .fill{position:absolute;left:0;bottom:0;width:2px;background:var(--signal);
+  transition:height .15s linear}
+@media(max-width:820px){.rail{display:none}}
+body{padding-left:34px}
+@media(max-width:820px){body{padding-left:0}}
+
+/* ---------- hero ---------- */
+.hero{padding:110px 0 70px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--signal);margin-bottom:26px}
+.hero h1{font-size:clamp(2.4rem,6.2vw,4.6rem)}
+.hero h1 em{font-style:normal;color:var(--paper-dim)}
+.lede{font-size:clamp(1.05rem,2vw,1.3rem);max-width:63ch;margin:28px 0 0;color:var(--paper-dim)}
+.lede b{color:var(--paper);font-weight:500}
+
+/* ---------- the channel chart: hero thesis ---------- */
+.thesis{margin:56px 0 0;border:1px solid var(--line);background:var(--ink-2);padding:26px}
+.thesis h3{font-size:.95rem;font-family:var(--mono);font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--paper-dim);margin-bottom:22px}
+.chan{display:grid;grid-template-columns:52px 1fr 46px;gap:12px;align-items:center;margin-bottom:9px}
+.chan-l{font-family:var(--mono);font-size:12px;color:var(--paper-dim);text-align:right}
+.bar{height:22px;background:#1A2529;position:relative;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;display:block;
+  background:var(--line);animation:grow 1s cubic-bezier(.2,.7,.3,1) both}
+.bar i.lib{background:var(--signal)}
+.chan-v{font-family:var(--mono);font-size:12px;color:var(--paper)}
+@keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+.thesis p{font-size:.9rem;color:var(--paper-dim);margin:20px 0 0;max-width:70ch}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));
+  border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.stat{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 20px}
+.stat .n{font-family:var(--display);font-size:2.1rem;font-weight:700;color:var(--signal);line-height:1}
+.stat .n.cy{color:var(--measured)}
+.stat .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--paper-dim);margin-top:10px}
+
+section{padding:76px 0;border-bottom:1px solid var(--line)}
+section h2{font-size:clamp(1.5rem,3.2vw,2.1rem);margin-bottom:12px}
+.sec-note{color:var(--paper-dim);max-width:66ch;margin:0 0 40px}
+
+/* ---------- findings ---------- */
+.find{border-left:2px solid var(--line);padding:0 0 0 24px;margin-bottom:38px}
+.find.high{border-left-color:var(--alert)}
+.find.med{border-left-color:var(--signal)}
+.find-h{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;margin-bottom:10px}
+.find-id{font-family:var(--mono);font-size:12px;color:var(--paper-dim)}
+.find-sev{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:2px 8px;border:1px solid var(--line);color:var(--paper-dim)}
+.find h3{font-size:1.12rem;font-weight:500;flex:1 1 320px}
+.find p{margin:0 0 10px;color:var(--paper-dim);max-width:74ch}
+.find p b{color:var(--paper);font-weight:500}
+.find .rec{color:var(--paper);border-top:1px solid var(--line);padding-top:12px;margin-top:14px}
+
+/* ---------- tables / lists ---------- */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:8px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--paper-dim);font-weight:500}
+td{color:var(--paper-dim)}
+td.m{font-family:var(--mono);color:var(--paper)}
+.warn{border:1px solid var(--line);border-left:2px solid var(--signal);
+  background:var(--ink-2);padding:18px 22px;margin:26px 0;font-size:.92rem;color:var(--paper-dim)}
+.warn b{color:var(--paper);font-weight:500}
+ul.plain{list-style:none;padding:0;margin:0;color:var(--paper-dim)}
+ul.plain li{padding:11px 0;border-bottom:1px solid var(--line);max-width:78ch}
+ul.plain li b{color:var(--paper);font-weight:500}
+
+/* ---------- downloads ---------- */
+.dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:14px;margin-top:28px}
+.card{border:1px solid var(--line);padding:20px;text-decoration:none;display:block;
+  transition:border-color .18s,background .18s}
+.card:hover,.card:focus-visible{border-color:var(--signal);background:var(--ink-2)}
+.card .t{font-family:var(--display);font-weight:500;color:var(--paper);font-size:1rem}
+.card .d{font-family:var(--mono);font-size:11px;color:var(--paper-dim);margin-top:7px}
+a:focus-visible,.card:focus-visible{outline:2px solid var(--measured);outline-offset:3px}
+footer{padding:56px 0 76px;color:var(--paper-dim);font-size:.85rem}
+footer a{color:var(--paper-dim)}
+</style>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true">
+  <span>−30 dBm</span><span>signal</span><span>−96 dBm</span>
+  <div class="fill" id="fill"></div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Packetgeist · Cherwood Corporation, Division 02 · Field study 001</div>
+  <h1>The WiFi was fine.<br><em>That was the problem.</em></h1>
+  <p class="lede">A passive 802.11 site survey of Plainsboro Public Library — a three-storey,
+  46,500 sq ft civic building. Two floors, 67 measurement points, 1,523 network observations.
+  <b>Every single point met the −67 dBm design threshold.</b> There were no dead zones to find.
+  What the data showed instead was eight access points competing with each other for airtime.</p>
+
+  <div class="thesis">
+    <h3>2.4 GHz occupancy — distinct BSSIDs heard at ≥ −80 dBm</h3>
+    <div class="chan"><div class="chan-l">ch 1</div><div class="bar"><i style="width:67%;animation-delay:.05s"></i></div><div class="chan-v">16</div></div>
+    <div class="chan"><div class="chan-l">ch 6</div><div class="bar"><i class="lib" style="width:100%;animation-delay:.15s"></i></div><div class="chan-v">24</div></div>
+    <div class="chan"><div class="chan-l">ch 11</div><div class="bar"><i style="width:29%;animation-delay:.25s"></i></div><div class="chan-v">7</div></div>
+    <p>Five of the library's eight access points sit on channel 6. Channels 1, 6 and 11 are the
+    only non-overlapping options in 2.4 GHz — putting five radios on one of them forces them
+    into a single collision domain, where they hear each other and take turns.</p>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="n cy">100%</div><div class="k">Points meeting −67 dBm on 5 GHz</div></div>
+  <div class="stat"><div class="n">8</div><div class="k">Access points identified</div></div>
+  <div class="stat"><div class="n">13</div><div class="k">Peak library radios audible at one point</div></div>
+  <div class="stat"><div class="n">6/8</div><div class="k">APs heard on both floors</div></div>
+  <div class="stat"><div class="n cy">1,523</div><div class="k">Network observations</div></div>
+</div>
+
+<section id="findings">
+  <h2>Findings</h2>
+  <p class="sec-note">Six findings. Each states what was measured, the probable cause, the
+  impact, and what to do about it. Every number traces back to the raw data in the repository.</p>
+
+  <div class="find high">
+    <div class="find-h"><span class="find-id">F-01</span><span class="find-sev">High</span>
+      <h3>2.4 GHz channel plan is heavily unbalanced</h3></div>
+    <p>Five of eight access points operate on channel 6; two on channel 11, one on channel 1.
+    Channel 6 carries <b>24 distinct BSSIDs</b> at −80 dBm or stronger — channel 11 carries seven.</p>
+    <p class="rec">Redistribute across 1/6/11. No hardware cost.</p>
+  </div>
+
+  <div class="find high">
+    <div class="find-h"><span class="find-id">F-02</span><span class="find-sev">High</span>
+      <h3>5 GHz radios crowded into UNII-3 at mismatched widths</h3></div>
+    <p>Three access points share channel 149 — one at 20 MHz, two at 80 MHz. Two more share
+    channel 153. An 80 MHz channel with primary 149 occupies 149 through 161, swallowing both
+    153 and 157. <b>Six of eight radios contend inside one band segment</b> while UNII-1 and
+    UNII-2 sit almost unused.</p>
+    <p class="rec">Move radios into the empty ranges and standardise width. In a dense
+    deployment 40 MHz beats 80 — half the peak rate, twice the non-overlapping channels.</p>
+  </div>
+
+  <div class="find med">
+    <div class="find-h"><span class="find-id">F-03</span><span class="find-sev">Medium</span>
+      <h3>Access point density exceeds the coverage requirement</h3></div>
+    <p>At a typical location the survey device heard <b>7.3 library radios</b> at −75 dBm or
+    stronger, peaking at 13 — while every measured point met −67 dBm with margin to spare.</p>
+    <p>Measured independently: while associated at roughly −50 dBm, the client negotiated a
+    96 Mbps link against a device ceiling of 433 Mbps. A fifth of capability under near-ideal
+    signal is contention, not coverage.</p>
+    <p class="rec">Reduce transmit power to tighten cell overlap. <b>Do not add access
+    points</b> — the data does not support a coverage-gap argument.</p>
+  </div>
+
+  <div class="find med">
+    <div class="find-h"><span class="find-id">F-04</span><span class="find-sev">Unverified</span>
+      <h3>Hidden BSSIDs advertise a legacy security capability</h3></div>
+    <p>Eighteen non-broadcast BSSIDs carry a capability string Android renders as WEP. The
+    public network reports no encryption and is labelled "Security: weak" by Android's own
+    classifier.</p>
+    <p>Android reports WEP when a beacon sets the privacy bit without a modern RSN element —
+    consistent with real WEP, but also with certain captive-portal configurations.
+    <b>This is not confirmed and is not presented as fact.</b> It needs verification by
+    someone with administrative access.</p>
+    <p class="rec">Worth noting regardless: hiding an SSID is not a security control. All
+    eighteen were enumerated passively during a routine walk.</p>
+  </div>
+
+  <div class="find med">
+    <div class="find-h"><span class="find-id">F-05</span><span class="find-sev">Medium</span>
+      <h3>Coverage propagates freely between floors</h3></div>
+    <p>Six of eight access points are audible on both floors at −67 dBm or better. Three whose
+    peak is upstairs still reach <b>−42, −46 and −49 dBm downstairs</b>, across essentially
+    every ground floor point.</p>
+    <p>The building's central volume is a double-height reading room open between levels. A
+    vertical void carries signal between floors far better than the surrounding slabs do.</p>
+    <p class="rec">Plan channels for the building as one three-dimensional volume. Vertically
+    adjacent access points near the atrium need different channels too — not just different
+    from their neighbours on the same floor.</p>
+  </div>
+
+  <div class="find">
+    <div class="find-h"><span class="find-id">F-06</span><span class="find-sev">Low</span>
+      <h3>External RF environment is active but not dominant</h3></div>
+    <p>Thirty-plus outside networks, strongest at −51 dBm: four printers broadcasting
+    direct-connect SSIDs, personal hotspots, and residential networks from the attached homes
+    the architect's site plan places next door.</p>
+    <p class="rec">Disable direct-connect radios on printers that are already network-attached.
+    Factor neighbouring channel usage into the 2.4 GHz replan.</p>
+  </div>
+</section>
+
+<section id="method">
+  <h2>How it was done</h2>
+  <p class="sec-note">Passive survey only — broadcast beacon measurement. No association
+  testing, no traffic capture, no interaction with library infrastructure. Permission was
+  asked on arrival and again for the community room after its event ended; a study room was
+  reserved through the library's normal booking system.</p>
+
+  <table>
+    <tr><th>Instrument</th><th>Detail</th></tr>
+    <tr><td>Software</td><td class="m">NetSpot for Android, Survey mode, passive</td></tr>
+    <tr><td>Device</td><td class="m">Moto G Stylus 5G (2024) · Wi-Fi 5 · dual-band · 1×1</td></tr>
+    <tr><td>Ground floor</td><td class="m">36 points</td></tr>
+    <tr><td>Second floor</td><td class="m">31 points</td></tr>
+    <tr><td>On site</td><td class="m">15:30–19:00 · approx. 50 people in the building</td></tr>
+    <tr><td>Floor plans</td><td class="m">Architect's drawings · scale from the graphic scale bar</td></tr>
+  </table>
+
+  <div class="warn">
+    <b>The export is a database, not a picture.</b> A NetSpot <code>.netspu</code> file is a zip
+    containing SQLite. Every figure on this page came from querying it directly rather than
+    reading colours off a heatmap. Counting access points, for instance, means grouping the 94
+    distinct BSSIDs by the radio prefix they share — which collapses to eight physical APs, each
+    running two radios advertising several BSSIDs apiece.
+  </div>
+</section>
+
+<section id="limits">
+  <h2>What this survey cannot tell you</h2>
+  <p class="sec-note">Stated plainly, because a survey report claiming no limitations is
+  telling you the author doesn't know what they are.</p>
+  <ul class="plain">
+    <li><b>No 6 GHz visibility.</b> The survey device is dual-band Wi-Fi 5. If the building runs
+    6E or 7 equipment, that band is absent from this data entirely.</li>
+    <li><b>Single-stream client.</b> A 1×1 radio caps at 433 Mbps. No throughput figure here
+    describes the network's capability — only this client's experience.</li>
+    <li><b>Uncalibrated radio.</b> Consumer chipsets carry roughly ±3–6 dB of absolute
+    uncertainty. Findings rest on relative comparison under a consistent method.</li>
+    <li><b>No spectrum analyser.</b> Non-WiFi interference can be inferred, not observed. The
+    device reported no noise floor, so no SNR-based finding appears anywhere.</li>
+    <li><b>AP positions are estimated.</b> Trilaterated by software, not physically verified.
+    Channel assignments and AP counts come from beacon data and are reliable.</li>
+    <li><b>Materials are documentary.</b> Construction materials come from the building's
+    published product schedule, not on-site assessment.</li>
+    <li><b>Single time sample.</b> One evening. Conditions vary by hour and by crowd.</li>
+    <li><b>Two floors of three.</b> The children's level was excluded by choice — an
+    unaccompanied adult walking a measurement grid through a children's area isn't appropriate
+    regardless of policy. The mechanical room was not entered.</li>
+  </ul>
+</section>
+
+<section id="data">
+  <h2>Everything, downloadable</h2>
+  <p class="sec-note">Raw export, extracted data, the written report, and the field
+  methodology used to run the survey. Reproduce any figure on this page from the CSVs.</p>
+  <div class="dl">
+    <a class="card" href="reports/Survey-Findings-Report.pdf"><span class="t">Findings report</span><span class="d">PDF · 7 pages · six findings</span></a>
+    <a class="card" href="reports/Survey-Data-Pack.xlsx"><span class="t">Data pack</span><span class="d">XLSX · six sheets · live formulas</span></a>
+    <a class="card" href="data/raw-readings.csv"><span class="t">Raw readings</span><span class="d">CSV · 1,523 observations</span></a>
+    <a class="card" href="data/scan-points.csv"><span class="t">Scan points</span><span class="d">CSV · 67 locations</span></a>
+    <a class="card" href="data/ap-inventory.csv"><span class="t">AP inventory</span><span class="d">CSV · 8 access points</span></a>
+    <a class="card" href="data/cross-floor-propagation.csv"><span class="t">Cross-floor reach</span><span class="d">CSV · evidence for F-05</span></a>
+    <a class="card" href="docs/01-methodology.md"><span class="t">Methodology</span><span class="d">Markdown · how it was run</span></a>
+    <a class="card" href="docs/02-analysis.md"><span class="t">Analysis notes</span><span class="d">Markdown · the SQL, explained</span></a>
+    <a class="card" href="assets/plans/ground-floor.png"><span class="t">Ground floor plan</span><span class="d">PNG · survey basemap</span></a>
+    <a class="card" href="assets/plans/second-floor.png"><span class="t">Second floor plan</span><span class="d">PNG · survey basemap</span></a>
+    <a class="card" href="data/plainsboro-survey.netspu"><span class="t">Raw NetSpot export</span><span class="d">NETSPU · zip of SQLite</span></a>
+  </div>
+</section>
+
+<section id="hosting">
+  <h2>How this page reaches you</h2>
+  <p class="sec-note">The survey is one half of the work. The other half is that this site is served
+  from hardware on a desk, not a hosting provider.</p>
+  <table>
+    <tr><th>Layer</th><th>What runs there</th></tr>
+    <tr><td>Host</td><td class="m">ThinkPad T14 · Proxmox VE</td></tr>
+    <tr><td>Container</td><td class="m">Debian LXC on VLAN 40 (DMZ), 10.10.40.0/24</td></tr>
+    <tr><td>Web server</td><td class="m">nginx — second vhost alongside the Cherwood site</td></tr>
+    <tr><td>Perimeter</td><td class="m">FortiGate 60E · DMZ→Internet permitted; DMZ→Trusted, Servers and Guest all denied</td></tr>
+    <tr><td>Publication</td><td class="m">Cloudflare named tunnel — outbound only, no inbound rule exists</td></tr>
+  </table>
+  <div class="warn">
+    <b>There is no inbound firewall rule.</b> The tunnel opens an outbound connection from the DMZ
+    container to the Cloudflare edge and holds it there; requests arrive back down that existing
+    connection. The host has no publicly routable address and no forwarded port, so scanning the
+    perimeter finds nothing — the intended result, not an omission. And because the DMZ is denied
+    any path to the Trusted, Servers and Guest zones, compromising this web host reaches nothing else.
+  </div>
+  <p class="sec-note" style="margin-top:26px">This runs on infrastructure built for
+  <a href="https://cherwood.tarunc.com">Cherwood Corporation</a> — a documented FortiGate 60E,
+  Cisco 3560E and autonomous-AP network with four segmented zones. Packetgeist is Division 02,
+  and it needed no new container, tunnel or firewall rule: an isolated DMZ built properly the
+  first time takes a second public service without opening anything.</p>
+</section>
+
+<footer>
+  <p>Floor plans and construction product schedule: <em>Architectural Record</em>, "Plainsboro
+  Public Library", 16 March 2011. Building by BKSK Architects, completed May 2010. Reproduced
+  for non-commercial technical analysis. Architectural photography by Jeffrey Totaro and Vanni
+  Archive is not reproduced here.</p>
+  <p>Survey conducted with the library's permission. No library systems were accessed. Internal
+  network addressing has been deliberately excluded from all published material.</p>
+  <p style="margin-top:22px">Packetgeist · Cherwood Corporation, Division 02 —
+  wireless field studies by <a href="https://tarunc.com">Tarun Cherukuri</a><br>
+  <a href="https://cherwood.tarunc.com">Cherwood lab network</a> ·
+  <a href="https://github.com/">Source and data on GitHub</a> ·
+  Served from a DMZ container over a Cloudflare Tunnel</p>
+</footer>
+
+</div>
+
+<script>
+const fill=document.getElementById('fill');
+const onScroll=()=>{const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+  fill.style.height=(p*100)+'%';};
+document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+</script>
+</body>
+</html>
