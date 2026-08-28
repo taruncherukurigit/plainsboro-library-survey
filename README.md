@@ -16,7 +16,7 @@ network whose access points are competing with each other for airtime.
 
 📄 **[Read the findings report](reports/Survey-Findings-Report.pdf)** ·
 📊 **[Data pack (xlsx)](reports/Survey-Data-Pack.xlsx)** ·
-🌐 **[Project site](https://packetgeist.tarunc.com)** — self-hosted; if it's down, everything is browsable here
+🌐 **[Project site](https://packetgeist.tarunc.com)** · 🔁 **[GitHub Pages mirror](https://taruncherukurigit.github.io/plainsboro-library-survey/)** — self-hosted primary, GitHub-hosted mirror if it's down
 
 ---
 
