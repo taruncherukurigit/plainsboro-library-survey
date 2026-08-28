@@ -1,5 +1,11 @@
 # Plainsboro Public Library — WiFi Site Survey
 
+![Survey](https://img.shields.io/badge/survey-passive%20802.11-blue)
+![Points](https://img.shields.io/badge/measurement%20points-67-informational)
+![Observations](https://img.shields.io/badge/observations-1%2C523-informational)
+![Findings](https://img.shields.io/badge/findings-6-orange)
+![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
+
 A passive 802.11 site survey of a three-storey, 46,500 sq ft public library, conducted
 with permission on 27 August 2026. Two floors surveyed, 67 measurement points,
 1,523 individual network observations, 8 access points characterised.
@@ -13,6 +19,41 @@ network whose access points are competing with each other for airtime.
 🌐 **[Project site](https://packetgeist.tarunc.com)** — self-hosted; if it's down, everything is browsable here
 
 ---
+
+## Ground floor — signal coverage
+
+![Ground floor signal level heatmap](assets/heatmaps/ground-signal.png)
+
+## Second floor — signal coverage
+
+![Second floor signal level heatmap](assets/heatmaps/second-signal.png)
+
+<details>
+<summary><b>All six heatmaps — signal, SIR, and SNR, both floors</b></summary>
+<br>
+
+| Ground floor | Second floor |
+|---|---|
+| ![Ground SIR](assets/heatmaps/ground-sir.png) | ![Second SIR](assets/heatmaps/second-sir.png) |
+| Signal-to-interference ratio | Signal-to-interference ratio |
+| ![Ground SNR](assets/heatmaps/ground-snr.png) | ![Second SNR](assets/heatmaps/second-snr.png) |
+| Signal-to-noise ratio* | Signal-to-noise ratio* |
+
+\* *The survey device did not expose per-point noise-floor data; SNR reflects NetSpot's internal calculation and is indicative only. See [assets/heatmaps/README.md](assets/heatmaps/README.md).*
+
+</details>
+
+## Source floor plans
+
+<table>
+<tr>
+<td width="50%"><img src="assets/plans/ground-floor.png" alt="Ground floor plan"></td>
+<td width="50%"><img src="assets/plans/second-floor.png" alt="Second floor plan"></td>
+</tr>
+<tr><td align="center">Ground floor</td><td align="center">Second floor</td></tr>
+</table>
+
+*Architectural Record, "Plainsboro Public Library," 16 March 2011. Design drawings, not as-builts — see [Attribution](ATTRIBUTION.md).*
 
 ## What was found
 
@@ -95,6 +136,23 @@ doesn't know what they are:
 - **Materials are documentary.** Construction materials come from the building's
   published product schedule, not on-site assessment.
 - **Single time sample.** One evening, roughly 50 people in the building.
+
+## Client-side evidence
+
+<table>
+<tr>
+<td width="33%"><img src="assets/screenshots/wifi-list-5ghz.png" alt="Android Wi-Fi list showing Security: weak"></td>
+<td width="33%"><img src="assets/screenshots/wifi-linkrate.png" alt="Link rate 96 Mbps transmit, 78 Mbps receive"></td>
+<td width="33%"><img src="assets/screenshots/wifi-list-24ghz.png" alt="Same network on 2.4 GHz, 11 minutes later"></td>
+</tr>
+<tr>
+<td align="center" width="33%">Security: weak · None</td>
+<td align="center" width="33%">96 / 78 Mbps at ≈−50 dBm</td>
+<td align="center" width="33%">Confirmed again on 2.4 GHz</td>
+</tr>
+</table>
+
+Independent measurements from the phone's own network stack, not NetSpot — corroborating F-04 and F-03. See [assets/screenshots/README.md](assets/screenshots/README.md).
 
 ## Attribution
 

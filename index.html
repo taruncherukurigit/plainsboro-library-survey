@@ -117,6 +117,23 @@ ul.plain li b{color:var(--paper);font-weight:500}
 a:focus-visible,.card:focus-visible{outline:2px solid var(--measured);outline-offset:3px}
 footer{padding:56px 0 76px;color:var(--paper-dim);font-size:.85rem}
 footer a{color:var(--paper-dim)}
+
+/* ---------- heatmap gallery ---------- */
+.gal-tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+.gal-tab{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding:8px 16px;border:1px solid var(--line);background:transparent;color:var(--paper-dim);
+  cursor:pointer;transition:all .15s}
+.gal-tab.active{border-color:var(--signal);color:var(--signal);background:var(--ink-2)}
+.gal-tab:hover{color:var(--paper)}
+.gal-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.gal-pair{grid-template-columns:1fr}}
+.gal-item{border:1px solid var(--line)}
+.gal-item img{width:100%;display:block}
+.gal-cap{font-family:var(--mono);font-size:11px;color:var(--paper-dim);
+  padding:10px 14px;border-top:1px solid var(--line)}
+.gal-view{display:none}
+.gal-view.active{display:block}
+.gal-note{font-size:.85rem;color:var(--paper-dim);margin-top:16px;max-width:70ch}
 </style>
 </head>
 <body>
@@ -279,6 +296,53 @@ footer a{color:var(--paper-dim)}
   </ul>
 </section>
 
+
+<section id="gallery">
+  <h2>Heatmaps</h2>
+  <p class="sec-note">Exported directly from the survey, filtered to the library's own networks
+  only. Click a metric to switch — the geometry looks similar across signal, SIR and SNR because
+  interference and ambient noise here don't vary sharply by location; that's expected, not an
+  export error (see the methodology notes).</p>
+
+  <div class="gal-tabs">
+    <button class="gal-tab active" onclick="showGal('signal',this)">Signal level</button>
+    <button class="gal-tab" onclick="showGal('sir',this)">SIR</button>
+    <button class="gal-tab" onclick="showGal('snr',this)">SNR *</button>
+  </div>
+
+  <div id="gal-signal" class="gal-view active">
+    <div class="gal-pair">
+      <div class="gal-item"><img src="assets/heatmaps/ground-signal.png" alt="Ground floor signal level heatmap" loading="lazy"><div class="gal-cap">Ground floor · −85 to −35 dBm</div></div>
+      <div class="gal-item"><img src="assets/heatmaps/second-signal.png" alt="Second floor signal level heatmap" loading="lazy"><div class="gal-cap">Second floor · −85 to −35 dBm</div></div>
+    </div>
+  </div>
+  <div id="gal-sir" class="gal-view">
+    <div class="gal-pair">
+      <div class="gal-item"><img src="assets/heatmaps/ground-sir.png" alt="Ground floor SIR heatmap" loading="lazy"><div class="gal-cap">Ground floor · signal-to-interference ratio</div></div>
+      <div class="gal-item"><img src="assets/heatmaps/second-sir.png" alt="Second floor SIR heatmap" loading="lazy"><div class="gal-cap">Second floor · signal-to-interference ratio</div></div>
+    </div>
+  </div>
+  <div id="gal-snr" class="gal-view">
+    <div class="gal-pair">
+      <div class="gal-item"><img src="assets/heatmaps/ground-snr.png" alt="Ground floor SNR heatmap" loading="lazy"><div class="gal-cap">Ground floor · signal-to-noise ratio</div></div>
+      <div class="gal-item"><img src="assets/heatmaps/second-snr.png" alt="Second floor SNR heatmap" loading="lazy"><div class="gal-cap">Second floor · signal-to-noise ratio</div></div>
+    </div>
+    <p class="gal-note">* The survey device did not expose per-point noise-floor data. SNR here
+    reflects NetSpot's internal calculation rather than measured ambient noise, and is indicative
+    only.</p>
+  </div>
+</section>
+
+<section id="plans">
+  <h2>Source floor plans</h2>
+  <p class="sec-note">Extracted directly from the survey project. Design drawings from
+  <em>Architectural Record</em> (2011) — not as-builts.</p>
+  <div class="gal-pair">
+    <div class="gal-item"><img src="assets/plans/ground-floor.png" alt="Ground floor plan" loading="lazy"><div class="gal-cap">Ground floor plan</div></div>
+    <div class="gal-item"><img src="assets/plans/second-floor.png" alt="Second floor plan" loading="lazy"><div class="gal-cap">Second floor plan</div></div>
+  </div>
+</section>
+
 <section id="data">
   <h2>Everything, downloadable</h2>
   <p class="sec-note">Raw export, extracted data, the written report, and the field
@@ -346,6 +410,12 @@ const onScroll=()=>{const h=document.documentElement;
   const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
   fill.style.height=(p*100)+'%';};
 document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+function showGal(name, btn){
+  document.querySelectorAll('.gal-view').forEach(function(el){el.classList.remove('active')});
+  document.getElementById('gal-'+name).classList.add('active');
+  document.querySelectorAll('.gal-tab').forEach(function(el){el.classList.remove('active')});
+  btn.classList.add('active');
+}
 </script>
 </body>
 </html>
