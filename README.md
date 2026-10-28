@@ -16,7 +16,7 @@ network whose access points are competing with each other for airtime.
 
 📄 **[Read the findings report](reports/Survey-Findings-Report.pdf)** ·
 📊 **[Data pack (xlsx)](reports/Survey-Data-Pack.xlsx)** ·
-🌐 **[Project site](https://packetgeist.tarunc.com)** · 🔁 **[GitHub Pages mirror](https://taruncherukurigit.github.io/plainsboro-library-survey/)** — self-hosted primary, GitHub-hosted mirror if it's down
+> 🌐 Project site: [taruncherukurigit.github.io/plainsboro-library-survey](https://taruncherukurigit.github.io/plainsboro-library-survey/) · 💼 **[Portfolio](https://taruncherukurigit.github.io/portfolio-page/)**
 
 ---
 
@@ -72,11 +72,8 @@ at zero hardware cost — and explicitly *not* adding access points.
 
 ## Where this lives
 
-The site is served from a DMZ container in my own lab at
-**[packetgeist.tarunc.com](https://packetgeist.tarunc.com)**. That is home hardware, so
-if it is unreachable, this repository holds the same content — the report, the data, the
-analysis and the site itself — and GitHub Pages serves a rendered copy of this
-repository as a fallback.
+This repository holds everything: the report, the data, the analysis and the project site
+(`index.html`). The site was previously self-hosted from a DMZ container in my home lab.
 
 ## Repository layout
 
@@ -176,9 +173,9 @@ Third-party material as noted above retains its original rights.
 
 ## Hosting
 
-Served as a second vhost on the existing DMZ container from the Cherwood Corporation
+Previously served as a second vhost on the existing DMZ container in my home
 lab network (VLAN 40), published through the existing Cloudflare named tunnel. No new
 container, tunnel or firewall rule was required.
 See [`deploy/`](deploy/) for the nginx vhost and the three steps to add it.
 
-Packetgeist is Division 02 of the [Cherwood Corporation](https://cherwood.tarunc.com) lab.
+Part of my home lab portfolio: [taruncherukurigit.github.io/portfolio-page](https://taruncherukurigit.github.io/portfolio-page/)
