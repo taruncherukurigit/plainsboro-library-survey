@@ -1,4 +1,4 @@
-# Deployment — packetgeist.tarunc.com
+# Deployment — github.com/taruncherukurigit/plainsboro-library-survey
 
 This site is a **second vhost on the existing DMZ container** built during the
 Cherwood Corporation project. No new container, no new tunnel, no new firewall rule.
@@ -77,8 +77,8 @@ manual record — you will end up with two conflicting answers.
 
 ```bash
 systemctl status cloudflared --no-pager
-curl -sI https://packetgeist.tarunc.com | head -1
-curl -sI https://cherwood.tarunc.com    | head -1   # confirm you didn't break it
+curl -sI https://github.com/taruncherukurigit/plainsboro-library-survey | head -1
+curl -sI https://taruncherukurigit.github.io/cherwood-health/    | head -1   # confirm you didn't break it
 ```
 
 ## Updating the site later
